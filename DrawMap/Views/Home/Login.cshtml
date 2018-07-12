@@ -1,4 +1,5 @@
-﻿@model dynamic
+﻿@using System.Web.UI.HtmlControls
+@model DrawMap.Models.LogInModel
 
 @{
     ViewBag.Title = "title";
@@ -6,10 +7,14 @@
 
 <h2>title</h2>
 
-<form action="./LogIn">
+<form id="login-form" action="@Url.Action("LogIn", "Home")">
     Email:<br>
-    <input name="email" type="text">
+    <input name="email" type="text"><br>
     Password:<br>
-    <input name="password" type="password">
+    <input name="password" type="password"><br>
     <input type="submit" value="Log in">
+    @if (Model.HasError)
+    {
+        <input id="login-error-message" type="text" value="@Model.ErrorMessage">
+    }
 </form>
