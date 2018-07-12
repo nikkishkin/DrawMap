@@ -1,0 +1,40 @@
+﻿@model DrawMap.Note
+
+@{
+    ViewBag.Title = "title";
+}
+
+<h2>title</h2>
+<h3>@Model.Content</h3>
+
+
+<div id="map" style="width: 500px; height: 500px"></div>
+
+<script src="../Scripts/ol.js"></script>
+<script>
+    var geoJsonObjectStr = "@Model.Content";
+    geoJsonObjectStr = geoJsonObjectStr.replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+    var geoJsonObject = JSON.parse(geoJsonObjectStr);
+
+    var vectorSource = new ol.source.Vector({
+        features: (new ol.format.GeoJSON()).readFeatures(geoJsonObject)
+    });
+
+    var vectorLayer = new ol.layer.Vector({
+        source: vectorSource
+    });
+
+    var map = new ol.Map({
+        layers: [
+            vectorLayer,
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            })
+        ],
+        target: 'map',
+        view: new ol.View({
+            center: [0, 0],
+            zoom: 2
+        })
+    });
+</script>

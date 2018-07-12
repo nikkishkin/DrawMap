@@ -1,0 +1,94 @@
+﻿@using DrawMap
+@model IEnumerable<Note>
+
+@{
+    ViewBag.Title = "title";
+}
+
+<h2>title</h2>
+
+@{
+    foreach (Note note in Model)
+    {
+        <div class="note-container">
+            <span>@note.Name</span><br>
+            <a class="watch-on-map-link" href="./ViewMap?noteId=@note.Id">Watch on map</a> |
+            <a class="show-hide-content" href="">Show content</a> |
+            <a href="" class="rename-note-link">Rename</a>
+            <form class="rename-note-form" action="./RenameNote">
+                New name:<br>
+                <input name="name" type="text">
+                <input name="noteId" type="hidden" value="@note.Id">
+                <input type="submit" value="Save">
+                <input class="cancel-rename-note-btn" type="button" value="Cancel">
+            </form>
+            <p class="note-content">@note.Content</p>
+            <form class="delete-note-form" action="./DeleteNote">
+                <input name="noteId" type="hidden" value="@note.Id">
+                <input class="delete-note-btn" type="submit" value="Delete">
+            </form>
+        </div>
+    }
+}
+
+<form id="add-note-form" action="./AddNote">
+    Name:<br>
+    <input name="name" id="note-name-input" type="text"><br>
+    Content:<br>
+    <textarea name="content" id="note-content-input"></textarea><br>
+    <input type="submit" value="Add note">
+</form>
+
+@section Scripts
+{
+    <script>
+        $(".show-hide-content").on('click', function(e) {
+            if ($(e.target).html() === "Show content") {
+                $(e.target).html("Hide content");
+                $(e.target).siblings(".note-content").show().attr("display", "inline-block");
+            } else {
+                $(e.target).html("Show content");
+                $(e.target).siblings(".note-content").hide();
+            }
+            return false;
+        });
+
+        $(".rename-note-link").on('click', function(e) {
+            $(e.target).siblings(".rename-note-form").show();
+            return false;
+        });
+
+        $(".cancel-rename-note-btn").on("click", function (e) {
+            $(e.target).siblings("input[name='name']").val("");
+            $(e.target).parent().hide();
+        });
+
+        if (window.location.href.indexOf("Home/Index") === -1) {
+            var $watchOnMapLinks = $(".watch-on-map-link");
+            for (var i = 0; i < $watchOnMapLinks.length; i++) {
+                var $currentLink = $($watchOnMapLinks[i]);
+                var currentUrl = $currentLink.attr("href");
+                var url = "Home" + currentUrl.substr(1);
+                $currentLink.attr("href", url);
+            }
+
+            var $renameNoteForms = $(".rename-note-form");
+            for (var i = 0; i < $renameNoteForms.length; i++) {
+                var $currentForm = $($renameNoteForms[i]);
+                var currentUrl = $currentForm.attr("action");
+                var url = "Home" + currentUrl.substr(1);
+                $currentForm.attr("action", url);
+            }
+
+            var $deleteNoteForms = $(".delete-note-form");
+            for (var i = 0; i < $deleteNoteForms.length; i++) {
+                var $currentForm = $($deleteNoteForms[i]);
+                var currentUrl = $currentForm.attr("action");
+                var url = "Home" + currentUrl.substr(1);
+                $currentForm.attr("action", url);
+            }
+
+            $("#add-note-form").attr("action", "Home/AddNote");
+        }
+    </script>
+}
